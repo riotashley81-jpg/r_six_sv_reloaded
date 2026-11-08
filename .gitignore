@@ -16,6 +16,8 @@ XP*.bin
 # LiveArea art made from the game's icon and splash by vita/make_livearea.py
 /vita/sce_sys/*.png
 /vita/sce_sys/livearea/contents/*.png
+# full-size sources for that art (make_livearea.py ICON BACKGROUND)
+/vita/art-src/
 
 # --- Third-party dependencies fetched separately (see README) ---
 /external/boost/
