@@ -10,6 +10,16 @@ emulates the small Java side the game expects. On Windows the ARM code runs
 through the [dynarmic](https://github.com/azahar-emu/dynarmic) JIT; on the
 Vita it runs natively (see [vita/README.md](vita/README.md)).
 
+Running on a PS Vita:
+
+| | |
+|---|---|
+| ![Hotel lobby](docs/screenshots/vita-hotel-lobby.jpg) | ![Mission cutscene](docs/screenshots/vita-cutscene.jpg) |
+| ![Hotel corridor](docs/screenshots/vita-corridor.jpg) | ![Farm at night](docs/screenshots/vita-farm.jpg) |
+
+Downloads for Windows and the Vita are on the
+[Releases](https://github.com/riotashley81-jpg/r_six_sv_reloaded/releases) page.
+
 ## This repository contains no game files
 
 Only the loader's source code is here. The game itself (the APK, its
