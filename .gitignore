@@ -1,0 +1,47 @@
+# --- Game files: copyrighted, never commit. Bring your own copy. ---
+/apk/
+/gamedata/
+gamedata*/
+*.apk
+*.obb
+*.rar
+*.so
+*.bdae
+*.bar
+# Save files written by the game (tests/saves holds a Mission 1 save locally)
+/tests/saves/
+SaveGame.bin
+SavedState.bin
+XP*.bin
+# LiveArea art made from the game's icon and splash by vita/make_livearea.py
+/vita/sce_sys/*.png
+/vita/sce_sys/livearea/contents/*.png
+
+# --- Third-party dependencies fetched separately (see README) ---
+/external/boost/
+/external/SDL2/
+# Prebuilt Vita packages (ours embeds the LiveArea art; ShaRKBR33D is third-party)
+*.vpk
+*.suprx
+*.skprx
+/vita/eboot.bin
+
+# --- Build output and run leftovers ---
+/build/
+/build-*/
+__pycache__/
+*.pyc
+*.log
+log.txt
+shot_*.bmp
+shot_*.png
+/shaders/
+/shaders_cg/
+cg_dump/
+
+# --- Editors / OS ---
+.vs/
+.vscode/
+*.user
+Thumbs.db
+desktop.ini

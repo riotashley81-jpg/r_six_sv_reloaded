@@ -1,0 +1,14 @@
+# new game -> skip training briefing -> skip tutorial via pause menu -> Mission 1
+# title -> campaign -> new game -> operative
+620 tap 427 240
+1000 tap 690 167
+1300 tap 690 167
+1600 tap 690 230
+# briefing: SKIP (top right), then "touch the screen to continue"
+4100 tap 812 40
+4300 tap 812 40
+4600 tap 427 440
+4900 tap 427 440
+# tutorial: pause (top left)
+6000 tap 22 25
+6060 shot

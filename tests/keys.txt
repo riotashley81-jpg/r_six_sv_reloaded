@@ -1,0 +1,57 @@
+200 tap 427 240
+350 tap 690 167
+500 tap 690 167
+650 tap 690 230
+1100 tap 812 40
+1300 tap 812 40
+1500 tap 812 40
+1700 tap 812 40
+1900 tap 812 40
+2100 tap 812 40
+2300 tap 812 40
+2500 tap 812 40
+2700 tap 812 40
+2900 tap 812 40
+3100 tap 812 40
+3300 tap 812 40
+3500 tap 812 40
+3700 tap 812 40
+3900 tap 812 40
+4100 tap 812 40
+4600 tap 427 440
+4800 rpad 0 -1
+4820 rpad 0 0
+4900 rpad 0 1
+4940 rpad 0 0
+5020 rpad 0 -1
+5040 rpad -1 0
+5070 rpad 0 0
+5150 rpad 1 0
+5210 rpad 0 0
+5290 rpad -1 0
+5320 rpad 0 0
+5400 keydown 99
+5430 keyup 99
+5500 shot
+5510 keydown 100
+5540 keyup 100
+5610 shot
+5620 keydown 23
+5650 keyup 23
+5720 shot
+5730 keydown 102
+5760 keyup 102
+5830 shot
+5840 keydown 103
+5870 keyup 103
+5940 shot
+5950 keydown 225
+5980 keyup 225
+6050 shot
+6060 keydown 4
+6090 keyup 4
+6160 shot
+6170 keydown 62
+6200 keyup 62
+6270 shot
+6280 quit

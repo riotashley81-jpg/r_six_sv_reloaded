@@ -1,0 +1,18 @@
+# main menu -> Campaign -> Continue -> skip briefing and cutscenes -> in game.
+# Needs a save: copy tests/saves/mission1/* into the data dir first (start of Mission 1).
+620 tap 427 240
+1000 tap 690 167
+1300 tap 690 230
+# briefing: SKIP (top right), then "touch the screen to continue"
+3500 tap 812 40
+3700 tap 812 40
+4000 tap 427 440
+4300 tap 427 440
+# cutscenes: touch the screen, then the X (top right)
+4800 tap 427 240
+4830 tap 812 40
+5300 tap 427 240
+5330 tap 812 40
+5800 tap 427 240
+5830 tap 812 40
+6300 shot

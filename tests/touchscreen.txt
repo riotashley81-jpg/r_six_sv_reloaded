@@ -1,0 +1,35 @@
+# main menu -> Campaign -> Continue -> in game, then exercise the on-screen controls.
+# Needs a save: copy tests/saves/mission1/* into the data dir first (start of Mission 1).
+620 tap 427 240
+1000 tap 690 167
+1300 tap 690 230
+# briefing: SKIP (top right), then "touch the screen to continue"
+3500 tap 812 40
+3700 tap 812 40
+4000 tap 427 440
+4300 tap 427 440
+# cutscenes: touch the screen, then the X (top right)
+4800 tap 427 240
+4830 tap 812 40
+5300 tap 427 240
+5330 tap 812 40
+5800 tap 427 240
+5830 tap 812 40
+# On-screen controls test for non-Xperia builds (Desire HD, Optimus 2X, Galaxy S, Droid X).
+# 1048585 / 1048586 are the default "touch" actions bound to G (grenade) and Left Shift (sprint).
+6400 shot
+6410 lpad 0 1
+6520 shot
+6530 lpad 0 0
+6560 rpad 1 0
+6620 rpad 0 0
+6640 shot
+6660 key 1048585
+6720 shot
+6800 keydown 1048586
+6800 lpad 0 1
+6900 shot
+6910 keyup 1048586
+6910 lpad 0 0
+6950 key 103
+6956 shot
