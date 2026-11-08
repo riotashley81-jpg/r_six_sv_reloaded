@@ -89,7 +89,7 @@ explains its own format and is reloaded when saved.
 | `src/` | the loader: ELF loading, HLE of Android libraries, JNI/Java emulation, GL, input |
 | `vita/` | the PS Vita frontend (VitaSDK), sharing `src/` |
 | `tests/` | input scripts for `--script` / `tools/r6ctl.py` |
-| `tools/` | `r6ctl.py` (drive a running game), `compare_card.py` (check Vita card data) |
+| `tools/` | `r6ctl.py` (drive a running game), `vita_install_data.py` (put data on the Vita card; `Vita-Install-Data.bat` runs it), `compare_card.py` (check Vita card data) |
 | `external/` | dynarmic (submodule), Boost and SDL2 (downloaded, see above) |
 
 Some test scripts expect a save at a given point of the campaign in

@@ -19,7 +19,15 @@ code and emulates the Java side. It shares its core with the PC loader in
 2. Copy the extracted APK: the contents of `apk/xperia-play/` go to
    `ux0:data/r6sv/apk/`, so that the loader finds
    `ux0:data/r6sv/apk/lib/armeabi-v7a/librainbowsix.so`.
-3. Copy the game data **flattened** (see below). With the Vita's memory card
+3. Copy the game data. The easy way: start USB mode in VitaShell, then drag
+   the data archive (`.rar`/`.zip`/`.7z`, any device's) or the extracted data
+   folder onto `Vita-Install-Data.bat` in the `port` folder. It unpacks the
+   archive, keeps the data already on the card as a `gamedata-<date>` backup,
+   copies the new data in the layout the Vita needs, carries your saves over,
+   checks the copy and puts `r6sv.vpk` on the card root to install. Same from a
+   terminal: `python tools/vita_install_data.py SOURCE [H:]`.
+
+   By hand: copy the game data **flattened** (see below). With the Vita's memory card
    mounted as, say, `H:` (VitaShell USB mode), from the `port` folder:
 
    ```
