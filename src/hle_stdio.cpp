@@ -26,6 +26,7 @@
 #include <io.h>
 #endif
 
+#include <algorithm>
 #include <cerrno>
 #include <mutex>
 #include <unordered_map>
@@ -33,6 +34,7 @@
 
 #include "hle.h"
 #include "os.h"
+#include "texture_decode.h"
 
 namespace hle {
 
@@ -321,6 +323,7 @@ struct GFile {
     std::string path, mode;
     long pos = 0;           // where to resume after reopening
     bool parkable = false;  // read-only, so it can be closed and reopened
+    bool dxt5_as_atc = false;  // a DXT5 texture served as ATC (see dxt5_texture)
     u64 used = 0;
 };
 static std::mutex file_lock;  // held for every file operation
@@ -412,6 +415,53 @@ template <class R, class Fn> static R with_file(u32 g, R fail, Fn fn) {
     return f ? fn(f) : fail;
 }
 
+// The LG Optimus 2X data has DXT5 textures (DDS files named .tga), which the
+// other builds skip, leaving them untextured. Such files are read as ATC
+// instead, which every build loads: fread rewrites the header's format tag and
+// converts the 16-byte blocks after the 128-byte header (tex::dxt5_to_atc).
+static const u32 DDS_HEADER = 128, DDS_FOURCC = 84;
+static bool dxt5_texture(FILE* f, const std::string& path) {
+    size_t n = path.size();
+    if (n < 4) return false;
+    std::string ext = path.substr(n - 4);
+    for (char& ch : ext) ch = (char)tolower((unsigned char)ch);
+    if (ext != ".tga" && ext != ".dds") return false;
+    u8 h[DDS_HEADER];
+    bool dxt5 = fread(h, 1, DDS_HEADER, f) == DDS_HEADER && memcmp(h, "DDS ", 4) == 0 && (h[80] & 4) &&
+                memcmp(h + DDS_FOURCC, "DXT5", 4) == 0;
+    if (dxt5) {
+        fseek(f, 0, SEEK_END);
+        dxt5 = (ftell(f) - DDS_HEADER) % 16 == 0;
+    }
+    fseek(f, 0, SEEK_SET);
+    return dxt5;
+}
+// buf holds len bytes read from file offset pos; blocks cut by the ends of the
+// read are fetched whole from the file to convert them.
+static void dxt5_read_as_atc(FILE* f, u8* buf, long pos, size_t len) {
+    long end = pos + (long)len;
+    for (u32 i = 0; i < 4; i++)
+        if (DDS_FOURCC + i >= (u32)pos && DDS_FOURCC + i < (u32)end) buf[DDS_FOURCC + i - pos] = (u8)"ATCI"[i];
+    if (end <= (long)DDS_HEADER) return;
+    long first = (std::max(pos, (long)DDS_HEADER) - DDS_HEADER) / 16, last = (end - DDS_HEADER + 15) / 16;
+    long resume = -1;
+    for (long b = first; b < last; b++) {
+        long at = DDS_HEADER + b * 16;
+        if (at >= pos && at + 16 <= end) {
+            tex::dxt5_to_atc(buf + (at - pos));
+            continue;
+        }
+        if (resume < 0) resume = ftell(f);
+        u8 blk[16] = {};
+        fseek(f, at, SEEK_SET);
+        if (fread(blk, 1, 16, f) != 16) continue;
+        tex::dxt5_to_atc(blk);
+        long from = std::max(at, pos), to = std::min(at + 16, end);
+        memcpy(buf + (from - pos), blk + (from - at), (size_t)(to - from));
+    }
+    if (resume >= 0) fseek(f, resume, SEEK_SET);
+}
+
 static u32 h_fopen(const char* path, const char* mode) {
     std::string m;
     for (const char* p = mode; *p; p++) if (*p != 'b' && *p != 't') m += *p;
@@ -448,6 +498,11 @@ static u32 h_fopen(const char* path, const char* mode) {
     gf.path = hp;
     gf.mode = m;
     gf.parkable = m[0] == 'r' && m.find('+') == std::string::npos;
+    gf.dxt5_as_atc = gf.parkable && dxt5_texture(f, hp);
+    if (gf.dxt5_as_atc) {
+        static u32 converted = 0;
+        if (converted++ == 0) LOGI("textures: DXT5 data found, loading it as ATC (%s)", path);
+    }
     gf.used = ++use_clock;
     trace('o', g, 0, 0, 0, hp.c_str());
     static u32 peak = 0;
@@ -471,8 +526,16 @@ static int h_fclose(u32 g) {
     return f ? fclose(f) : 0;
 }
 static u32 h_fread(void* buf, u32 size, u32 n, u32 g) {
+    bool as_atc;
+    {
+        std::lock_guard lk(file_lock);
+        auto it = files.find(g);
+        as_atc = it != files.end() && it->second.dxt5_as_atc;
+    }
     return with_file(g, 0u, [&](FILE* f) {
+        long pos = as_atc ? ftell(f) : 0;
         u32 r = (u32)fread(buf, size, n, f);
+        if (as_atc && r) dxt5_read_as_atc(f, (u8*)buf, pos, (size_t)r * size);
         trace('r', g, size, n, (s32)r);
         return r;
     });

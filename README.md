@@ -19,8 +19,10 @@ Only the loader's source code is here. The game itself (the APK, its
 
 Supported builds of the game: Xperia Play (gamepad mode), plus the HTC Desire
 HD, LG Optimus 2X, Samsung Galaxy S and Motorola Droid X builds (the loader
-works their on-screen controls for you). Any build's library runs on the
-Xperia Play data.
+works their on-screen controls for you). Any build's library works with any
+build's data folder (Xperia Play, Desire HD, Optimus 2X or Galaxy S; the
+Droid X has none of its own). The Optimus 2X data's DXT5 textures are
+converted to ATC as they load, since only the LG build reads DXT5 itself.
 
 ## Setting up
 

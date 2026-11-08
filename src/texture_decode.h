@@ -18,4 +18,13 @@ u32 atc_size(u32 format, u32 w, u32 h);
 // Decode to tightly packed RGBA8; returns false for unknown formats.
 bool decode_atc(u32 format, const u8* src, u32 w, u32 h, std::vector<u8>& rgba);
 
+// The LG Optimus 2X data stores its textures as DXT5, which only the LG build
+// loads; the others take ATC. dxt5_to_atc turns one 16-byte DXT5 block into
+// an ATC interpolated-alpha block in place (the alpha half is the same format;
+// colour endpoint 0 loses its lowest green bit). atc_to_dxt5 goes back, so the
+// GPU gets DXT5 again; it fails if a block uses ATC's second colour mode, which
+// DXT can't express (then the caller decodes on the CPU as before).
+void dxt5_to_atc(u8* block);
+bool atc_to_dxt5(const u8* src, u32 size, std::vector<u8>& out);
+
 }  // namespace tex

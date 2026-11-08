@@ -100,4 +100,39 @@ bool decode_atc(u32 f, const u8* src, u32 w, u32 h, std::vector<u8>& rgba) {
     return true;
 }
 
+// DXT colour indices: 0 = c0, 1 = c1, 2 = 2/3 c0 + 1/3 c1, 3 = 1/3 c0 + 2/3 c1.
+// ATC (mode 0):        0 = c0, 1 = 5/8 c0 + 3/8 c1, 2 = 3/8 c0 + 5/8 c1, 3 = c1.
+static u32 remap_indices(u32 idx, const u8 map[4]) {
+    u32 out = 0;
+    for (int i = 0; i < 16; i++) out |= (u32)map[(idx >> (2 * i)) & 3] << (2 * i);
+    return out;
+}
+static u32 rd32(const u8* p) { return (u32)(p[0] | (p[1] << 8) | (p[2] << 16) | ((u32)p[3] << 24)); }
+static void wr16(u8* p, u16 v) { p[0] = (u8)v; p[1] = (u8)(v >> 8); }
+static void wr32(u8* p, u32 v) { for (int i = 0; i < 4; i++) p[i] = (u8)(v >> (8 * i)); }
+
+void dxt5_to_atc(u8* block) {
+    u8* c = block + 8;  // the first 8 bytes (alpha) stay as they are
+    u16 c0 = (u16)(c[0] | (c[1] << 8));
+    static const u8 map[4] = {0, 3, 1, 2};
+    wr16(c, (u16)(((c0 >> 11) << 10) | (((c0 >> 6) & 31) << 5) | (c0 & 31)));  // RGB565 -> RGB555, mode 0
+    wr32(c + 4, remap_indices(rd32(c + 4), map));
+}
+
+bool atc_to_dxt5(const u8* src, u32 size, std::vector<u8>& out) {
+    if (size % 16) return false;
+    for (u32 o = 0; o < size; o += 16)
+        if (src[o + 9] & 0x80) return false;
+    out.assign(src, src + size);
+    static const u8 map[4] = {0, 2, 3, 1};
+    for (u32 o = 0; o < size; o += 16) {
+        u8* c = &out[o + 8];
+        u16 c0 = (u16)(c[0] | (c[1] << 8));
+        u32 g = (c0 >> 5) & 31;
+        wr16(c, (u16)(((c0 >> 10) << 11) | (((g << 1) | (g >> 4)) << 5) | (c0 & 31)));
+        wr32(c + 4, remap_indices(rd32(c + 4), map));
+    }
+    return true;
+}
+
 }  // namespace tex

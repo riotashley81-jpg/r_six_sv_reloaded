@@ -77,7 +77,8 @@ that have no key. The HUD controls only act during gameplay, not in menus.
 | Circle    | its usual action, and sprint while held           |
 
 R fires and Square changes stance; the rear touchpad does nothing on these
-builds. They run on the Xperia Play data already on the card: to switch builds, replace
+builds. Any build also works with any build's data, so the data on the card
+can come from any device. To switch builds, replace
 only `ux0:data/r6sv/apk/lib/armeabi-v7a/librainbowsix.so` with that build's
 (from `apk/<build>/lib/armeabi-v7a/`). Keep the Xperia one to switch back.
 The log (`ux0:data/r6sv/log.txt`) says which controls are active.

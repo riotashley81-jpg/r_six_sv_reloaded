@@ -252,6 +252,12 @@ void h_CompressedTexImage2D(u32 t, s32 lvl, u32 fmt, s32 w, s32 h, s32 border, s
         ffp_fix::tex_image((u32)lvl, ffp_fix::format_has_alpha(fmt));
         return;
     }
+    std::vector<u8> dxt;  // ATC that came from DXT5 data (the LG build's) goes back to the GPU as DXT5
+    if (fmt == tex::ATC_RGBA_INTERPOLATED && data && tex::atc_to_dxt5((const u8*)data, (u32)size, dxt)) {
+        g_CompressedTexImage2D(t, lvl, 0x83F3, w, h, border, size, dxt.data());
+        ffp_fix::tex_image((u32)lvl, true);
+        return;
+    }
     std::vector<u8> rgba;
     if (!data || !tex::decode_atc(fmt, (const u8*)data, (u32)w, (u32)h, rgba)) {
         unsupported_format(fmt, w, h);
