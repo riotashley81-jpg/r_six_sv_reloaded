@@ -73,14 +73,13 @@ def find_7zip():
 
 
 def find_data_root(folder):
-    """The folder that holds 'data' (the archive may wrap it in one or two folders)."""
-    for depth in range(3):
-        for dirpath, dirs, _ in os.walk(folder):
-            if dirpath[len(folder):].count(os.sep) != depth:
-                continue
-            if "data" in dirs and os.path.isdir(os.path.join(dirpath, "data", "3d")):
-                return dirpath
-    fail("no game data in %s (expected a folder with data/3d inside)" % folder)
+    """The folder that holds 'data', however deep the archive wraps it (e.g. a
+    whole SD card copy: sdcard/gameloft/games/GloftR6HP/data). Shallowest wins."""
+    hits = [dirpath for dirpath, dirs, _ in os.walk(folder)
+            if "data" in dirs and os.path.isdir(os.path.join(dirpath, "data", "3d"))]
+    if not hits:
+        fail("no game data in %s (expected a folder with data/3d inside)" % folder)
+    return min(hits, key=lambda p: p.count(os.sep))
 
 
 def is_root_file(rel):
